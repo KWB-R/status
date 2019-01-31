@@ -1,0 +1,8 @@
+^LICENSE\.md$
+^status\.Rproj$
+^\.Rhistory$
+^\.RData$
+^\.Rproj\.user$
+^\.here$
+^README\.md$
+^.travis\.yml$
