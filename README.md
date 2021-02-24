@@ -1,17 +1,9 @@
-[![codecov](https://codecov.io/github/KWB-R/status/branch/master/graphs/badge.svg)](https://codecov.io/github/KWB-R/status)
-[![Project Status](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/status)]()
+[![Render and Deploy KWB-R Package Status Table](https://github.com/KWB-R/status/actions/workflows/main.yml/badge.svg)](https://github.com/KWB-R/status/actions/workflows/main.yml)
 
 # status
 
-Create Status Report for KWB-R Packages.
-
-## Installation
-
-```r
-#install.packages("remotes", repos = "https://cloud.r-project.org")
-remotes::install_github("KWB-R/status")
-```
+Create status report for KWB-R packages using continious integration (Github 
+Actions) workflow by running  [kwb.pkgstatus::create_report_rpackages()](https://kwb-r.github.io/kwb.pkgstatus/reference/create_report_rpackages.html) and automatically deploy to Github Pages  
 
 ## Package Status Report Site
 
