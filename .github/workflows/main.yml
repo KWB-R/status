@@ -37,4 +37,3 @@ jobs:
           git config --local user.name "GitHub Actions"
           git commit index.html -m 'Re-build index.html'
           git push https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git HEAD:gh-pages
-    container: rocker/verse:latest
