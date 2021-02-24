@@ -47,8 +47,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          remotes::install_deps(dependencies = TRUE)
-          
+          Rscript -e "remotes::install_deps(dependencies = TRUE)"
+
       - name: Render Package Status Table
         run: Rscript -e "kwb.pkgstatus::create_report_rpackages()"
       
