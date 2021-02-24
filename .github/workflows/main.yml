@@ -9,9 +9,10 @@ on:
     # * is a special character in YAML so you have to quote this string
     # Run this job every day at 05:00 a.m UTC ('0 5 * * *')
     - cron:  '0 5 * * *'
+
 jobs:
-  build:
-    runs-on: ubuntu-18.04
+  render:
+    runs-on: macOS-latest
     env: 
       ACTIONS_ALLOW_UNSECURE_COMMANDS: TRUE
       APPVEYOR_TOKEN: ${{ secrets.APPVEYOR_TOKEN }}
@@ -20,20 +21,20 @@ jobs:
       GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
       ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@master
-      - name: Install Package Dependencies
-        run: |-
-          Rscript -e "install.packages('remotes', repos = 'https://demo.rstudiopm.com/all/__linux__/bionic/latest')"
-          Rscript -e "remotes::install_deps(dependencies = TRUE, repos = 'https://demo.rstudiopm.com/all/__linux__/bionic/latest')"
-      - name: Render Site
-        run: |-
-          Rscript -e "kwb.pkgstatus::create_report_rpackages()"
-      - name: Deploy to GitHub Pages
-        if: github.ref == 'refs/heads/master'
+      - uses: actions/checkout@v1
+      - uses: r-lib/actions/setup-r@v1
+      - uses: r-lib/actions/setup-pandoc@v1
+      - name: Install rmarkdown, remotes, and the local package
+        run: |
+          install.packages("remotes")
+          remotes::install_local(".")
+        shell: Rscript {0}
+      - name: Render Package Status Table
+        run: Rscript -e "kwb.pkgstatus::create_report_rpackages()"
+      - name: Commit results
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git commit index.html -m 'Update KWB-R package status' || echo "No changes to commit"
-          git push origin || echo "No changes to commit"
+          git commit index.html -m 'Re-build index.html'
+          git push https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git HEAD:gh-pages
     container: rocker/verse:latest
