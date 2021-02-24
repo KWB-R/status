@@ -38,6 +38,10 @@ jobs:
           writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
 
+      - name: Install dependencies
+        run: |
+          Rscript -e "remotes::install_deps(dependencies = TRUE)"
+
       - name: Cache R packages
         uses: actions/cache@v2
         with:
@@ -45,16 +49,15 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
 
-      - name: Install dependencies
+
+      - name: Render R-Package Status Table
         run: |
-          remotes::install_deps(dependencies = TRUE)
+          Rscript -e "kwb.pkgstatus::create_report_rpackages()"
           
-      - name: Render Package Status Table
-        run: Rscript -e "kwb.pkgstatus::create_report_rpackages()"
-      
-      - name: Commit results
+      - name: Deploy To GH-Pages
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
+          git add index.html
           git commit index.html -m 'Re-build index.html'
           git push https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git HEAD:gh-pages
