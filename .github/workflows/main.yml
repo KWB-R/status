@@ -21,20 +21,40 @@ jobs:
       GITLAB_TOKEN: ${{ secrets.GITLAB_TOKEN }}
       ZENODO_TOKEN: ${{ secrets.ZENODO_TOKEN }}
     steps:
-      - uses: actions/checkout@v1
-      - uses: r-lib/actions/setup-r@v1
-      - uses: r-lib/actions/setup-pandoc@v1
-      - name: Install rmarkdown, remotes, and the local package
+      - uses: actions/checkout@v2
+
+      - uses: r-lib/actions/setup-r@master
+
+      - uses: r-lib/actions/setup-pandoc@master
+      
+      - name: Install system dependencies
+        if: runner.os == 'MacOS'
+        run: brew install harfbuzz fribidi
+        
+      - name: Query dependencies
         run: |
-          install.packages("remotes")
-          remotes::install_local(".")
+          install.packages('remotes')
+          saveRDS(remotes::dev_package_deps(dependencies = TRUE), ".github/depends.Rds", version = 2)
+          writeLines(sprintf("R-%i.%i", getRversion()$major, getRversion()$minor), ".github/R-version")
         shell: Rscript {0}
+
+      - name: Cache R packages
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-${{ hashFiles('.github/depends.Rds') }}
+          restore-keys: ${{ runner.os }}-${{ hashFiles('.github/R-version') }}-1-
+
+      - name: Install dependencies
+        run: |
+          remotes::install_deps(dependencies = TRUE)
+          
       - name: Render Package Status Table
         run: Rscript -e "kwb.pkgstatus::create_report_rpackages()"
+      
       - name: Commit results
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
           git commit index.html -m 'Re-build index.html'
           git push https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git HEAD:gh-pages
-    container: rocker/verse:latest
