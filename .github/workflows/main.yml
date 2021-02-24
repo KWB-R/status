@@ -13,6 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-18.04
     env: 
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: TRUE
       APPVEYOR_TOKEN: ${{ secrets.APPVEYOR_TOKEN }}
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
