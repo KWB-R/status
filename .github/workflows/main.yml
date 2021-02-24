@@ -1,8 +1,13 @@
 name: Render and Deploy KWB-R Package Status Table
-'on': push
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
+  push:
+    branches:
+      - master
   schedule:
     # * is a special character in YAML so you have to quote this string
-    # Run this job every day at 05:00 a.m ('0 5 * * *')
+    # Run this job every day at 05:00 a.m UTC ('0 5 * * *')
     - cron:  '0 5 * * *'
 jobs:
   build:
