@@ -10,6 +10,10 @@ Authors@R:
       person(given = "Kompetenzzentrum Wasser Berlin gGmbH (KWB)",
              role = "cph"))
 Description: Create Status Report for KWB-R Packages.
+Imports: 
+   kwb.pkgstatus,
+Remotes:
+   github::kwb-r/kwb.pkgstatus@dev
 License: MIT + file LICENSE
 URL: https://github.com/KWB-R/status
 BugReports: https://github.com/KWB-R/status/issues
