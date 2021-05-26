@@ -5,5 +5,4 @@
 ^\.Rproj\.user$
 ^\.here$
 ^README\.md$
-^.travis\.yml$
 ^\.github/workflows$
